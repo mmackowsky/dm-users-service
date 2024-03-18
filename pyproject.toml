@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "dm-users-service"
+version = "0.1.0"
+description = ""
+authors = ["mmackowsky <maciostah@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {extras = ["all"], version = "^0.110.0"}
+pre-commit = "^3.6.2"
+docker = "^7.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
