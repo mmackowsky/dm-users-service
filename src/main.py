@@ -1,4 +1,7 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
+from fastapi.security import HTTPBearer
+
+token_auth_scheme = HTTPBearer()
 
 app = FastAPI()
 
