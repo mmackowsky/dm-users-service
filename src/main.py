@@ -18,3 +18,12 @@ def public():
         ),
     }
     return result
+
+
+@app.get("/api/private")
+def private(token: str = Depends(token_auth_scheme)):
+    """A valid access token is required to access this route"""
+
+    result = token.credentials
+
+    return result
