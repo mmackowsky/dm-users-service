@@ -28,16 +28,23 @@ oauth.register(
 
 @app.post("api/login")
 async def login():
-    pass
+    return oauth.auth0.authorize_redirect(redirect_uri="callback/")
 
 
 @app.get("api/callback")  # POST method should be allowed
 async def callback():
+    token = oauth.auth0.authorize_access_token()
+    session["user"] = token
     pass
 
 
 @app.post("api/logout")
-def logout():
+async def logout():
+    pass
+
+
+@app.delete("api/delete_account/{user_id}")
+async def delete_account(user_id: int):
     pass
 
 
