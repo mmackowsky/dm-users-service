@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Security
 
-from .utils import VerifyToken
+from utils import VerifyToken
 
 app = FastAPI()
 auth = VerifyToken()
