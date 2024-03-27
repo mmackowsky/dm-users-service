@@ -9,6 +9,6 @@ services:
       - .:/dm-users-service
     ports:
       - "8002:8002"
-    depends_on:
-      db:
-        condition: service_healthy
+#    depends_on:
+#      db:
+#        condition: service_healthy
