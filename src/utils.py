@@ -6,6 +6,8 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, SecurityS
 
 from config import get_settings
 
+settings = get_settings()
+
 
 class UnauthorizedException(HTTPException):
     def __init__(self, detail: str, **kwargs):
@@ -26,11 +28,9 @@ class VerifyToken:
     """
 
     def __init__(self):
-        self.config = get_settings()
-
         # This gets the JWKS from a given URL and does processing, so you can
         # use any of the keys available
-        jwks_url = f"https://{self.config.auth0_domain}/.well-known/jwks.json"
+        jwks_url = f"https://{settings.AUTH0_DOMAIN}/.well-known/jwks.json"
         self.jwks_client = jwt.PyJWKClient(jwks_url)
 
     async def verify(
@@ -55,9 +55,9 @@ class VerifyToken:
             payload = jwt.decode(
                 token.credentials,
                 signing_key,
-                algorithms=self.config.auth0_algorithms,
-                audience=self.config.auth0_api_audience,
-                issuer=self.config.auth0_issuer,
+                algorithms=settings.AUTH0_ALGORITHMS,
+                audience=settings.AUTH0_API_AUDIENCE,
+                issuer=settings.AUTH0_ISSUER,
             )
         except Exception as error:
             raise UnauthorizedException(str(error))
