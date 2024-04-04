@@ -2,16 +2,18 @@ import requests
 import uvicorn
 from fastapi import FastAPI, Security
 
+from config import get_settings
 from utils import VerifyToken
 
 app = FastAPI()
 auth = VerifyToken()
+settings = get_settings()
 
 
 @app.get("/api/public")
 def public():
     """No access token required to access this route"""
-    data = requests.get(url="http://127.0.0.1:8001/api/public")
+    data = requests.get(url="http://127.0.0.1:8000/api/public")
     result = {
         "status": "success",
         "msg": (
@@ -28,5 +30,35 @@ def private(auth_result: str = Security(auth.verify)):
     return auth_result
 
 
+@app.post("/api/login")
+async def login():
+    pass
+
+
+@app.post("/api/users")
+async def create_user():
+    pass
+
+
+@app.get("/api/users")
+async def get_users():
+    pass
+
+
+@app.get("/api/users/{user_id}")
+async def get_user(user_id: int):
+    pass
+
+
+@app.put("/api/users/{user_id}")
+async def update_user(user_id: int):
+    pass
+
+
+@app.delete("/api/users/{user_id}")
+async def delete_user(user_id: int):
+    pass
+
+
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8002)
+    uvicorn.run(app, host=settings.SERVICE_HOST, port=settings.SERVICE_PORT)
