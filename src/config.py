@@ -8,13 +8,15 @@ load_dotenv()
 
 
 class Settings(BaseSettings):
-    auth0_client_id: str = os.getenv("AUTH0_CLIENT_ID")
-    auth0_client_secret: str = os.getenv("AUTH0_CLIENT_SECRET")
-    auth0_domain: str = os.getenv("AUTH0_DOMAIN")
-    app_secret_key: str = os.getenv("APP_SECRET_KEY")
-    auth0_api_audience: str = os.getenv("AUTH0_API_AUDIENCE", "")
-    auth0_issuer: str = os.getenv("AUTH0_ISSUER")
-    auth0_algorithms: str = os.getenv("AUTH0_ALGORITHMS")
+    SERVICE_HOST: str = os.getenv("SERVICE_HOST")
+    SERVICE_PORT: int = os.getenv("SERVICE_PORT")
+    AUTH0_CLIENT_ID: str = os.getenv("AUTH0_CLIENT_ID")
+    AUTH0_CLIENT_SECRET: str = os.getenv("AUTH0_CLIENT_SECRET")
+    AUTH0_DOMAIN: str = os.getenv("AUTH0_DOMAIN")
+    APP_SECRET_KEY: str = os.getenv("APP_SECRET_KEY")
+    AUTH0_API_AUDIENCE: str = os.getenv("AUTH0_API_AUDIENCE", "")
+    AUTH0_ISSUER: str = os.getenv("AUTH0_ISSUER")
+    AUTH0_ALGORITHMS: str = os.getenv("AUTH0_ALGORITHMS")
 
     class Config:
         env_file = ".env"
