@@ -30,9 +30,9 @@ def private(auth_result: str = Security(auth.verify)):
     return auth_result
 
 
-@app.post("/api/login")
+@app.post("/api/login", status_code=201)
 async def login():
-    pass
+    return {'id': 1, 'user_type': "admin"}
 
 
 @app.post("/api/users")
@@ -42,7 +42,7 @@ async def create_user():
 
 @app.get("/api/users")
 async def get_users():
-    pass
+    return {"users": [{"id": 1, "user_type": "admin"}]}
 
 
 @app.get("/api/users/{user_id}")
