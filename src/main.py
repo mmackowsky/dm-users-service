@@ -3,6 +3,8 @@ import uvicorn
 from fastapi import FastAPI, Security
 
 from config import get_settings
+from database import Base, engine
+from datastructures import User
 from utils import VerifyToken
 
 app = FastAPI()
@@ -71,4 +73,5 @@ async def delete_user(user_id: int):
 
 
 if __name__ == "__main__":
+    User.metadata.create_all(bind=engine)
     uvicorn.run(app, host=settings.SERVICE_HOST, port=settings.SERVICE_PORT)
