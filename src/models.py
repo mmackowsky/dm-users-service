@@ -1,25 +1,6 @@
-from pydantic import BaseModel
 from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, Integer, String, text
 
 from database import Base
-
-
-class UsernamePasswordForm(BaseModel):
-    username: str
-    password: str
-
-
-class UserForm(UsernamePasswordForm):
-    email: str = None
-    full_name: str = None
-    user_type: str
-
-
-class UserUpdateForm(BaseModel):
-    username: str
-    email: str = None
-    full_name: str = None
-    user_type: str = None
 
 
 class User(Base):
@@ -31,4 +12,3 @@ class User(Base):
     full_name = Column(String(150), unique=False, nullable=True)
     user_type = Column(String(50), unique=False, nullable=False)
     hashed_password = Column(String(200), unique=True, nullable=False)
-
