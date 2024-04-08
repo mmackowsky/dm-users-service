@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     AUTH0_API_AUDIENCE: str = os.getenv("AUTH0_API_AUDIENCE", "")
     AUTH0_ISSUER: str = os.getenv("AUTH0_ISSUER")
     AUTH0_ALGORITHMS: str = os.getenv("AUTH0_ALGORITHMS")
+    SQLALCHEMY_DATABASE_URL: str = os.getenv("SQLALCHEMY_DATABASE_URL")
 
     class Config:
         env_file = ".env"
