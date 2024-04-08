@@ -1,15 +1,18 @@
 import requests
 import uvicorn
-from fastapi import FastAPI, Security
+from fastapi import FastAPI, Header, HTTPException, Request, Response, Security, status
 
+from auth import get_password_hash, verify_password
 from config import get_settings
-from database import Base, engine
-from datastructures import User
+from database import Base, SessionLocal, engine
+from models import User
+from schemas import UserForm, UsernamePasswordForm
 from utils import VerifyToken
 
 app = FastAPI()
 auth = VerifyToken()
 settings = get_settings()
+db = SessionLocal()
 
 
 @app.get("/api/public")
@@ -32,14 +35,34 @@ def private(auth_result: str = Security(auth.verify)):
     return auth_result
 
 
-@app.post("/api/login", status_code=201)
-async def login():
-    return {"id": 1, "user_type": "admin"}
+@app.post("/api/login", status_code=status.HTTP_201_CREATED)
+async def login(form_data: UsernamePasswordForm):
+    user = db.query(User).filter(User.id).first()  # POBRAĆ USERA
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    verify = verify_password(form_data.password, user.hashed_password)
+    if not verify:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Wrong password"
+        )
+
+    return user
 
 
-@app.post("/api/users")
-async def create_user():
-    pass
+@app.post("/api/users", status_code=status.HTTP_201_CREATED)
+async def create_user(
+    user: UserForm,
+    request: Request,
+    response: Response,
+    request_user_id: str = Header(None),
+):
+    hashed_password = get_password_hash(user.password)
+    data = user.dict()
+    db.add(data, hashed_password, request_user_id)
+    db.commit()
+    db.refresh(data, hashed_password, request_user_id)
+    return user
 
 
 @app.get("/api/users")
