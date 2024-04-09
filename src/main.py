@@ -4,7 +4,7 @@ from fastapi import FastAPI, Header, HTTPException, Request, Response, Security,
 
 from auth import get_password_hash, verify_password
 from config import get_settings
-from database import Base, SessionLocal, engine
+from database import SessionLocal, engine
 from models import User
 from schemas import UserForm, UsernamePasswordForm
 from utils import VerifyToken
@@ -37,7 +37,7 @@ def private(auth_result: str = Security(auth.verify)):
 
 @app.post("/api/login", status_code=status.HTTP_201_CREATED)
 async def login(form_data: UsernamePasswordForm):
-    user = db.query(User).filter(User.id).first()  # POBRAĆ USERA
+    user = db.query(User).filter(User.id).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
