@@ -37,7 +37,7 @@ def private(auth_result: str = Security(auth.verify)):
 
 @app.post("/api/login", status_code=status.HTTP_201_CREATED)
 async def login(form_data: UsernamePasswordForm):
-    user = db.query(User).filter(User.id).first()
+    user = db.query(User).filter(User.username == form_data.username).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
@@ -52,16 +52,21 @@ async def login(form_data: UsernamePasswordForm):
 
 @app.post("/api/users", status_code=status.HTTP_201_CREATED)
 async def create_user(
-    user: UserForm,
+    user_form: UserForm,
     request: Request,
     response: Response,
     request_user_id: str = Header(None),
 ):
-    hashed_password = get_password_hash(user.password)
-    data = user.dict()
-    db.add(data, hashed_password, request_user_id)
+    user = User(
+        id=request_user_id,
+        username=user_form.username,
+        email=user_form.email,
+        user_type=user_form.user_type,
+        hashed_password=get_password_hash(user_form.password),
+    )
+    db.add(user)
     db.commit()
-    db.refresh(data, hashed_password, request_user_id)
+    db.refresh(user)
     return user
 
 
