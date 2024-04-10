@@ -51,17 +51,17 @@ async def register(
     return user_form
 
 
-@app.get("/api/users")
+@app.get("/api/users", status_code=status.HTTP_200_OK)
 async def get_users():
     return db.query(User).all()
 
 
-@app.get("/api/users/{user_id}")
+@app.get("/api/users/{user_id}", status_code=status.HTTP_200_OK)
 async def get_user_by_id(user_id: int):
     return db.query(User).filter(User.id == user_id).first()
 
 
-@app.put("/api/users/{user_id}")
+@app.put("/api/users/{user_id}", status_code=status.HTTP_201_CREATED)
 async def update_user(user_id: int, update_form: UserUpdateForm):
     user = check_user_exists(db=db, db_value=User.id, input_value=user_id)
 
