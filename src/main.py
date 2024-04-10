@@ -15,26 +15,6 @@ settings = get_settings()
 db = SessionLocal()
 
 
-@app.get("/api/public")
-def public():
-    """No access token required to access this route"""
-    data = requests.get(url="http://127.0.0.1:8000/api/public")
-    result = {
-        "status": "success",
-        "msg": (
-            "Hello from a public endpoint! You don't need to be "
-            "authenticated to see this."
-        ),
-    }
-    return result, data
-
-
-@app.get("/api/private")
-def private(auth_result: str = Security(auth.verify)):
-    """A valid access token is required to access this route"""
-    return auth_result
-
-
 @app.post("/api/login", status_code=status.HTTP_201_CREATED)
 async def login(form_data: UsernamePasswordForm):
     user = check_user_exists(
