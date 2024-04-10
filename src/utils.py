@@ -68,16 +68,6 @@ class VerifyToken:
         return payload
 
 
-def check_user_exists(db: SessionLocal, input_value, db_value):
-    user = db.query(User).filter(db_value == input_value).first()
-    if user:
-        raise HTTPException(
-            detail={"exception": "User already exists"},
-            status_code=status.HTTP_404_NOT_FOUND,
-        )
-    return user
-
-
 def set_new_id(db: SessionLocal):
     last_user = db.query(User).order_by(desc(User.id)).first()
     new_user_id = (last_user.id + 1) if last_user else 1
