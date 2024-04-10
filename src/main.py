@@ -7,7 +7,7 @@ from config import get_settings
 from database import SessionLocal, engine
 from models import User
 from schemas import UserForm, UsernamePasswordForm, UserUpdateForm
-from utils import VerifyToken, check_user_exists
+from utils import VerifyToken, check_user_exists, set_new_id
 
 app = FastAPI()
 auth = VerifyToken()
@@ -20,9 +20,6 @@ async def login(form_data: UsernamePasswordForm):
     user = check_user_exists(
         db=db, db_value=User.username, input_value=form_data.username
     )
-    # user = db.query(User).filter(User.username == form_data.username).first()
-    # if not user:
-    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     verify = verify_password(form_data.password, user.hashed_password)
     if not verify:
@@ -34,25 +31,25 @@ async def login(form_data: UsernamePasswordForm):
 
 
 @app.post("/api/users", status_code=status.HTTP_201_CREATED)
-async def create_user(
+async def register(
     user_form: UserForm,
     request: Request,
     response: Response,
-    request_user_id: str = Header(None),
 ):
-    check_user_exists(db=db, db_value=User.username, input_value=user_form.username)
-
+    # check = check_user_exists(db=db, db_value=User.username, input_value=user_form.username)
+    # print(check)
     user = User(
-        id=request_user_id,
+        id=set_new_id(db),
         username=user_form.username,
         email=user_form.email,
         user_type=user_form.user_type,
         hashed_password=get_password_hash(user_form.password),
     )
+    print(user)
     db.add(user)
     db.commit()
     db.refresh(user)
-    return user
+    return user_form
 
 
 @app.get("/api/users")
@@ -62,7 +59,6 @@ async def get_users():
 
 @app.get("/api/users/{user_id}")
 async def get_user_by_id(user_id: int):
-    check_user_exists(db=db, db_value=User.id, input_value=user_id)
     return db.query(User).filter(User.id == user_id).first()
 
 
