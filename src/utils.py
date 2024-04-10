@@ -3,6 +3,7 @@ from typing import Optional
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, SecurityScopes
+from sqlalchemy import desc
 
 from config import get_settings
 from database import SessionLocal
@@ -72,3 +73,9 @@ def check_user_exists(db: SessionLocal, input_value, db_value):
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return user
+
+
+def set_new_id(db: SessionLocal):
+    last_user = db.query(User).order_by(desc(User.id)).first()
+    new_user_id = (last_user.id + 1) if last_user else 1
+    return new_user_id
