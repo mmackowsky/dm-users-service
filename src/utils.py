@@ -67,8 +67,8 @@ class VerifyToken:
         return payload
 
 
-def check_user_exists(db: SessionLocal, form_value, db_value):
-    user = db.query(User).filter(db_value == form_value).first()
+def check_user_exists(db: SessionLocal, input_value, db_value):
+    user = db.query(User).filter(db_value == input_value).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return user
