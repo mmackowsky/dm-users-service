@@ -6,7 +6,7 @@ from config import get_settings
 from database import SessionLocal, engine
 from models import User
 from schemas import UserForm, UsernamePasswordForm, UserUpdateForm
-from utils import VerifyToken, check_user_exists, set_new_id
+from utils import VerifyToken, set_new_id
 
 app = FastAPI()
 auth = VerifyToken()
