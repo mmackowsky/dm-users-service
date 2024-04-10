@@ -36,8 +36,7 @@ async def register(
     request: Request,
     response: Response,
 ):
-    # check = check_user_exists(db=db, db_value=User.username, input_value=user_form.username)
-    # print(check)
+    check_user_exists(db=db, db_value=User.username, input_value=user_form.username)
     user = User(
         id=set_new_id(db),
         username=user_form.username,
@@ -69,7 +68,7 @@ async def update_user(user_id: int, update_form: UserUpdateForm):
     user.username = update_form.username
     user.email = update_form.email
     user.user_type = update_form.user_type
-    user.hashed_password = get_password_hash(update_form.password)
+    user.full_name = update_form.full_name
 
     db.commit()
     db.refresh(user)
@@ -78,7 +77,7 @@ async def update_user(user_id: int, update_form: UserUpdateForm):
 
 @app.delete("/api/users/{user_id}", status_code=status.HTTP_200_OK)
 async def delete_user(user_id: int):
-    user = check_user_exists(db=db, db_value=User, input_value=user_id)
+    user = db.query(User).filter(User.id == user_id).first()
     db.delete(user)
     db.commit()
     return {"message": "User deleted successfully."}
