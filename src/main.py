@@ -16,9 +16,12 @@ db = SessionLocal()
 
 @app.post("/api/login", status_code=status.HTTP_201_CREATED)
 async def login(form_data: UsernamePasswordForm):
-    user = check_user_exists(
-        db=db, db_value=User.username, input_value=form_data.username
-    )
+    user = db.query(User).filter(User.username == form_data.username).first()
+    if not user:
+        raise HTTPException(
+            detail="User with given username not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
 
     verify = verify_password(form_data.password, user.hashed_password)
     if not verify:
@@ -35,7 +38,14 @@ async def register(
     request: Request,
     response: Response,
 ):
-    check_user_exists(db=db, db_value=User.username, input_value=user_form.username)
+    username = db.query(User).filter(User.username == user_form.username).first()
+    email = db.query(User).filter(User.email == user_form.email).first()
+    if username or email:
+        raise HTTPException(
+            detail="User for given data already exists",
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
     user = User(
         id=set_new_id(db),
         username=user_form.username,
@@ -43,7 +53,7 @@ async def register(
         user_type=user_form.user_type,
         hashed_password=get_password_hash(user_form.password),
     )
-    print(user)
+
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -62,7 +72,11 @@ async def get_user_by_id(user_id: int):
 
 @app.put("/api/users/{user_id}", status_code=status.HTTP_201_CREATED)
 async def update_user(user_id: int, update_form: UserUpdateForm):
-    user = check_user_exists(db=db, db_value=User.id, input_value=user_id)
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            detail="User with given id not found", status_code=status.HTTP_404_NOT_FOUND
+        )
 
     user.username = update_form.username
     user.email = update_form.email
@@ -77,6 +91,11 @@ async def update_user(user_id: int, update_form: UserUpdateForm):
 @app.delete("/api/users/{user_id}", status_code=status.HTTP_200_OK)
 async def delete_user(user_id: int):
     user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            detail="User with given id not found", status_code=status.HTTP_404_NOT_FOUND
+        )
+
     db.delete(user)
     db.commit()
     return {"message": "User deleted successfully."}
