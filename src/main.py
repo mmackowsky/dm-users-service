@@ -7,7 +7,7 @@ from config import get_settings
 from database import SessionLocal, engine
 from models import User
 from schemas import UserForm, UsernamePasswordForm
-from utils import VerifyToken
+from utils import VerifyToken, check_user_exists
 
 app = FastAPI()
 auth = VerifyToken()
@@ -37,9 +37,12 @@ def private(auth_result: str = Security(auth.verify)):
 
 @app.post("/api/login", status_code=status.HTTP_201_CREATED)
 async def login(form_data: UsernamePasswordForm):
-    user = db.query(User).filter(User.username == form_data.username).first()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    user = check_user_exists(
+        db=db, db_value=User.username, form_value=form_data.username
+    )
+    # user = db.query(User).filter(User.username == form_data.username).first()
+    # if not user:
+    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     verify = verify_password(form_data.password, user.hashed_password)
     if not verify:
@@ -57,6 +60,8 @@ async def create_user(
     response: Response,
     request_user_id: str = Header(None),
 ):
+    check_user_exists(db=db, db_value=User.username, form_value=user_form.username)
+
     user = User(
         id=request_user_id,
         username=user_form.username,
@@ -72,26 +77,19 @@ async def create_user(
 
 @app.get("/api/users")
 async def get_users():
-    return {
-        "users": [
-            {
-                "id": 1,
-                "user_type": "admin",
-                "username": "username",
-                "hashed_password": "password",
-                "created_by": 2,
-            }
-        ]
-    }
+    return db.query(User).all()
 
 
 @app.get("/api/users/{user_id}")
-async def get_user(user_id: int):
-    pass
+async def get_user_by_id(user_id: int):
+    check_user_exists(db=db, db_value=User.id, form_value=user_id)
+    return db.query(User).filter(User.id == user_id).first()
 
 
 @app.put("/api/users/{user_id}")
 async def update_user(user_id: int):
+    user = db.query(User).filter(User.id == user_id).first()
+
     pass
 
 
