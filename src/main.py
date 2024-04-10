@@ -1,6 +1,5 @@
-import requests
 import uvicorn
-from fastapi import FastAPI, Header, HTTPException, Request, Response, Security, status
+from fastapi import FastAPI, HTTPException, Request, Response, status
 
 from auth import get_password_hash, verify_password
 from config import get_settings
