@@ -5,6 +5,8 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, SecurityScopes
 
 from config import get_settings
+from database import SessionLocal
+from models import User
 
 settings = get_settings()
 
@@ -63,3 +65,10 @@ class VerifyToken:
             raise UnauthorizedException(str(error))
 
         return payload
+
+
+def check_user_exists(db: SessionLocal, form_value, db_value):
+    user = db.query(User).filter(db_value == form_value).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return user
