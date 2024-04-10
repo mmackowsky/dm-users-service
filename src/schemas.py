@@ -9,7 +9,7 @@ class UsernamePasswordForm(BaseModel):
 class UserForm(UsernamePasswordForm):
     email: str = None
     full_name: str = None
-    user_type: str
+    user_type: str = "default"
 
 
 class UserUpdateForm(BaseModel):
