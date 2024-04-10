@@ -70,8 +70,11 @@ class VerifyToken:
 
 def check_user_exists(db: SessionLocal, input_value, db_value):
     user = db.query(User).filter(db_value == input_value).first()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if user:
+        raise HTTPException(
+            detail={"exception": "User already exists"},
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
     return user
 
 
