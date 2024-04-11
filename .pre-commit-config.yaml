@@ -21,9 +21,3 @@ repos:
       - id: isort
         name: isort (python)
         args: ["--profile", "black", "--filter-files"]
--   repo: https://github.com/Riverside-Healthcare/djLint
-    rev: v1.34.0
-    hooks:
-      - id: djlint-reformat-handlebars
-        files: "\\.html"
-        types_or: ['html']
