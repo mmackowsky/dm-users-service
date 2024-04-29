@@ -19,10 +19,10 @@ class Settings(BaseSettings):
     AUTH0_ALGORITHMS: str = os.getenv("AUTH0_ALGORITHMS")
     POSTGRES_USER: str = os.getenv("POSTGRES_USER")
     POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD")
-    POSTGRES_SERVER: str = os.getenv("POSTGRES_SERVER", "localhost")
+    POSTGRES_HOST: str = os.getenv("POSTGRES_HOST")
     POSTGRES_PORT: str = os.getenv("POSTGRES_PORT", 5432)
-    POSTGRES_DB: str = os.getenv("POSTGRES_DB", "tdd")
-    SQLALCHEMY_DATABASE_URL: str = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    POSTGRES_DB: str = os.getenv("POSTGRES_DB")
+    SQLALCHEMY_DATABASE_URL: str = os.getenv("SQLALCHEMY_DATABASE_URL")
 
     class Config:
         env_file = ".env"
