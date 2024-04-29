@@ -1,9 +1,5 @@
-version: '3.9'
-
 services:
-  dm-users-service:
-    networks:
-      - dm-users-service
+  app-dm-users-service:
     build:
       context: ../
       dockerfile: .docker/Dockerfile
@@ -11,16 +7,31 @@ services:
     container_name: dm-users-service
     volumes:
       - .:/dm-users-service
+    env_file:
+      - /.env
+    environment:
+      - DATABASE_URL=${SQLALCHEMY_DATABASE_URL}
     ports:
       - "8100:8100"
-    deploy:
-      resources:
-        limits:
-          cpus: '0.001'
-          memory: 50M
-        reservations:
-          cpus: '0.0001'
-          memory: 20M
+    depends_on:
+      db-dm-users-service:
+        condition: service_healthy
 
-networks:
-  dm-users-service:
+  db-dm-users-service:
+    container_name: db-users-service
+    image: postgres:15
+    volumes:
+      - ./data/db-dm-users-service:/var/lib/postgresql/data
+    env_file:
+      - /.env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 30s
+      retries: 6
