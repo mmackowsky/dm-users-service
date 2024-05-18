@@ -1,5 +1,7 @@
 services:
   app-dm-users-service:
+    networks:
+      - dm-users-service
     build:
       context: ../
       dockerfile: .docker/Dockerfile
@@ -18,6 +20,8 @@ services:
         condition: service_healthy
 
   db-dm-users-service:
+    networks:
+      - dm-users-service
     container_name: db-users-service
     image: postgres:15
     volumes:
@@ -35,3 +39,6 @@ services:
       interval: 5s
       timeout: 30s
       retries: 6
+
+networks:
+  dm-users-service:
