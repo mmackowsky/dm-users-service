@@ -1,6 +1,4 @@
-import datetime
 import unittest
-from unittest.mock import MagicMock, patch
 
 from fastapi.testclient import TestClient
 from passlib.context import CryptContext
