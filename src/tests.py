@@ -84,8 +84,7 @@ class TestUsersAPI(unittest.TestCase):
         self.assertIn("username", response.json())
         self.assertIn("email", response.json())
 
-    def test_login_user(self):
-        print(f"Login test: {self.db.query(User).first()}")
+    def test_login_user_success(self):
         response = self.client.post(
             "/api/login",
             json={
@@ -96,6 +95,16 @@ class TestUsersAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json()["username"], "testuser")
 
+    def test_login_user_fail(self):
+        response = self.client.post(
+            "/api/login",
+            json={
+                "username": "testuser",
+                "password": "wrong_password",
+            }
+        )
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json()["detail"], "Wrong password")
 
     def test_register_duplicate_user(self):
         # Attempt to create the same user that in first test
