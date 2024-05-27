@@ -80,6 +80,21 @@ class TestUsersAPI(unittest.TestCase):
         self.assertIn("username", response.json())
         self.assertIn("email", response.json())
 
+    def test_register_duplicate_user(self):
+        # Attempt to create the same user that in first test
+        response = self.client.post(
+            "/api/users",
+            json={
+                "username": "testuser1",
+                "email": "testuser@example.com",
+                "user_type": "default",
+                "password": "password123",
+            },
+        )
+        self.assertEqual(response.status_code, 409)
+        self.assertIn("username", response.json())
+        self.assertIn("email", response.json())
+
 
 if __name__ == "__main__":
     unittest.main()
