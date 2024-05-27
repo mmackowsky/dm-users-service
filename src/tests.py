@@ -85,7 +85,7 @@ class TestUsersAPI(unittest.TestCase):
         response = self.client.post(
             "/api/users",
             json={
-                "username": "testuser1",
+                "username": "testuser",
                 "email": "testuser@example.com",
                 "user_type": "default",
                 "password": "password123",
@@ -94,6 +94,16 @@ class TestUsersAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 409)
         self.assertIn("username", response.json())
         self.assertIn("email", response.json())
+
+    def test_get_users(self):
+        response = self.client.get("/api/users")
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.json(), list)
+
+    def test_get_user_by_id(self):
+        response = self.client.get("/api/users/1")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["username"], "testuser")
 
 
 if __name__ == "__main__":
