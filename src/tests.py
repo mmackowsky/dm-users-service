@@ -70,9 +70,9 @@ class TestUsersAPI(unittest.TestCase):
         response = self.client.post(
             "/api/users",
             json={
-                "username": "testuser",
+                "username": "testuser1",
                 "email": "testuser@example.com",
-                "user_type": "regular",
+                "user_type": "default",
                 "password": "password123",
             },
         )
