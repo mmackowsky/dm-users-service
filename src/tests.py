@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from fastapi.testclient import TestClient
+from passlib.context import CryptContext
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -21,6 +22,8 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL)
 Base = declarative_base()
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 User.metadata.create_all(bind=engine)
@@ -47,13 +50,14 @@ class TestUsersAPI(unittest.TestCase):
     def setUp(self):
         self.client = TestClient(app)
         self.db = TestingSessionLocal()
+        hashed_password = pwd_context.hash("password")
         energy = User(
             id=1,
             username="testuser",
             email="qwerty@example.com",
             full_name="<NAME>",
             user_type="default",
-            hashed_password="password",
+            hashed_password=hashed_password,
         )
         self.db.add(energy)
         self.db.commit()
@@ -89,8 +93,8 @@ class TestUsersAPI(unittest.TestCase):
                 "password": "password",
             }
         )
-        self.assertEqual(response.json()["password"], self.db.query(User).first().hashed_password)
-        # self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json()["username"], "testuser")
 
 
     def test_register_duplicate_user(self):
