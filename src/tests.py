@@ -81,6 +81,7 @@ class TestUsersAPI(unittest.TestCase):
         self.assertIn("email", response.json())
 
     def test_login_user(self):
+        print(f"Login test: {self.db.query(User).first()}")
         response = self.client.post(
             "/api/login",
             json={
