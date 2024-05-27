@@ -92,7 +92,7 @@ class TestUsersAPI(unittest.TestCase):
             },
         )
         self.assertEqual(response.status_code, 409)
-        self.assertIn('User for given data already exists', response.json()["detail"])
+        self.assertIn("User for given data already exists", response.json()["detail"])
 
     def test_get_users(self):
         response = self.client.get("/api/users")
@@ -103,6 +103,21 @@ class TestUsersAPI(unittest.TestCase):
         response = self.client.get("/api/users/1")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["username"], "testuser")
+
+    def test_update_user(self):
+        response = self.client.put(
+            "/api/users/1",
+            json={
+                "username": "updateduser",
+                "email": "updated@example.com",
+                "user_type": "admin",
+                "full_name": "Updated User",
+            },
+        )
+        self.assertEqual(response.status_code, 201)
+        updated_user = self.db.query(User).first()
+        self.assertEqual(updated_user.username, "updateduser")
+        self.assertEqual(updated_user.email, "updated@example.com")
 
 
 if __name__ == "__main__":
