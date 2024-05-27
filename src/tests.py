@@ -119,6 +119,12 @@ class TestUsersAPI(unittest.TestCase):
         self.assertEqual(updated_user.username, "updateduser")
         self.assertEqual(updated_user.email, "updated@example.com")
 
+    def test_delete_user(self):
+        response = self.client.delete("/api/users/1")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["message"], "User deleted successfully.")
+        self.assertIsNone(self.db.query(User).first())
+
 
 if __name__ == "__main__":
     unittest.main()
