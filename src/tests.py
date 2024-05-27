@@ -84,8 +84,8 @@ class TestUsersAPI(unittest.TestCase):
         response = self.client.post(
             "/api/login",
             json={
-                "username": "testuser1",
-                "password": "password123",
+                "username": "testuser",
+                "password": "password",
             }
         )
         self.assertEqual(response.status_code, 200)
