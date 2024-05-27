@@ -92,8 +92,7 @@ class TestUsersAPI(unittest.TestCase):
             },
         )
         self.assertEqual(response.status_code, 409)
-        self.assertIn("username", response.json())
-        self.assertIn("email", response.json())
+        self.assertIn('User for given data already exists', response.json())
 
     def test_get_users(self):
         response = self.client.get("/api/users")
